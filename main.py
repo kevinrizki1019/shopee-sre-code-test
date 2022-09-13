@@ -2,11 +2,18 @@
 # The program will readthe user address
 # then save it to temporary database (on code)
 
-import os
-from http.server import HTTPServer, CGIHTTPRequestHandler
-# Make sure the server is created at current directory
-os.chdir('.')
-# Create server object listening the port 80
-server_object = HTTPServer(server_address=('', 80), RequestHandlerClass=CGIHTTPRequestHandler)
-# Start the web server
-server_object.serve_forever()
+from flask import Flask
+from flask import request
+
+app = Flask(__name__)
+
+addressHits = {}
+
+@app.route("/")
+def main():
+    visitorAddress = request.remote_addr
+    if visitorAddress not in addressHits:
+        addressHits[visitorAddress] = 1
+    else:
+        addressHits[visitorAddress] += 1 
+    return "User Address: " + visitorAddress + "\nHits: " + str(addressHits[visitorAddress])
